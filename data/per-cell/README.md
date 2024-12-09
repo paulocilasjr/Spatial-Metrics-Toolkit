@@ -11,6 +11,7 @@ Each CSV file in this folder must adhere to the following structure:
 
 ### Required Columns
 
+- Sample Identifier (like `sample_id` or `id`)
 - **`x`**: The x-coordinate of the cell in the tissue. Must be numeric.
 - **`y`**: The y-coordinate of the cell in the tissue. Must be numeric.
 - **Marker Columns**: Binary (1/0) columns indicating the presence (1) or absence (0) of specific markers for each cell. Marker names should be descriptive and consistent (e.g., `CD3+`, `CD20+`).
