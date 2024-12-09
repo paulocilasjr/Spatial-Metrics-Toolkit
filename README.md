@@ -9,6 +9,7 @@ The Spatial Metrics Toolkit is designed to automate the computation of spatial s
 
 The input data must be a CSV file with the following required columns:
 
+- Sample Identifier (like `sample_id` or `id`)
 - **`x`**: The x-coordinate of the cell or point in the tissue.
 - **`y`**: The y-coordinate of the cell or point in the tissue.
 - **Marker Columns**: Binary columns (1/0) indicating the presence (1) or absence (0) of specific markers for each cell. Each marker should have its own column with a descriptive name (e.g., `CD3+`, `CD20+`).
