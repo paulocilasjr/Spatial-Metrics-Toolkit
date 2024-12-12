@@ -31,7 +31,7 @@ calculate_kest = function(yaml, path){
                  Marker = marker, 
                  .before = 1)
       } else {
-        out = Kest(p, r=eval(parse(text = yaml$variables$radii_range))) %>%
+        out = Kest(p2, r=eval(parse(text = yaml$variables$radii_range))) %>%
           as.data.frame(check.names = FALSE) %>%
           mutate(!!yaml$variables$sample_id := id,
                  Marker = marker, 
