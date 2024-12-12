@@ -18,7 +18,7 @@ workflows:
   multiplex_immunofluorescence: TRUE
   spatial_transcriptomics: FALSE #ignored
 paths:
-  spatial: "data/mIF_per-cell" #required
+  spatial: "data/per-cell" #required
   output: "output" #where output to go
   clinical: "data/clinical.csv" #required
-  sample: "output/mif_summary.csv" #required to have link from sample to subject
+  sample: "output/summary.csv" #required to have link from sample to subject
