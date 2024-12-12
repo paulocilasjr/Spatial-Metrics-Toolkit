@@ -42,11 +42,15 @@ sfiles = list.files(config$paths$spatial,
 #source functions
 source("rpgm/create_folders.R")
 source("rpgm/kest.R")
+source("rpgm/xy_point.R")
 #prep folder structure
 createfolders(config)
 
 #plot functions for raw csv inputs
 #use data.table to import gz
+tmp = mclapply(sfiles, function(p){
+  plot_xy(config, p)
+}, mc.cores = opt$cores)
 
 #calculate spatial metrics
 if('kest' %in% config$metrics){
