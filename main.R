@@ -42,7 +42,10 @@ sfiles = list.files(config$paths$spatial,
 #source functions
 source("rpgm/create_folders.R")
 source("rpgm/kest.R")
+source("rpgm/gest.R")
+source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
+source("rpgm/plot_metrics.R")
 #prep folder structure
 createfolders(config)
 
@@ -53,10 +56,23 @@ tmp = mclapply(sfiles, function(p){
 }, mc.cores = opt$cores)
 
 #calculate spatial metrics
-if('kest' %in% config$metrics){
-  tmp = mclapply(sfiles, function(p){
-    calculate_kest(config, p)
-  }, mc.cores = opt$cores)
-}
+tmp = mclapply(config$metrics, function(m){
+  mclapply(sfiles, function(f){
+    if(m == "kest") calculate_kest(config, f)
+    if(m == "gest") calculate_gest(config, f)
+    if(m == "dbscan") calculate_dbscan(config, f)
+  }, mc.allow.recursive = TRUE)
+}, mc.cores = opt$cores, mc.allow.recursive = TRUE)
 
 #plot functions for spatial metrics
+sm_files = lapply(config$metrics, function(m){
+  list.files(file.path(config$paths$output, "metrics", m), full.names = TRUE)
+})
+names(sm_files) = config$metrics
+tmp = mclapply(names(sm_files), function(m){
+  tmp = mclapply(sm_files[[m]], function(f){
+    if(m == "kest") plot_kest(config, f)
+    if(m == "gest") plot_gest(config, f)
+    if(m == "dbscan") plot_dbscan(config, f)
+  }, mc.allow.recursive = TRUE)
+}, mc.cores = opt$cores, mc.allow.recursive = TRUE)

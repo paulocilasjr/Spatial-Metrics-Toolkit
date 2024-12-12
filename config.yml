@@ -17,6 +17,7 @@ variables:
 metrics:
   - kest
   - gest
+  - dbscan
 workflows:
   multiplex_immunofluorescence: TRUE
   spatial_transcriptomics: FALSE #ignored
