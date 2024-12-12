@@ -1,4 +1,4 @@
-library(dbscan)
+
 calculate_dbscan = function(config, path){
   #read in files
   df = fread(path, data.table = FALSE)

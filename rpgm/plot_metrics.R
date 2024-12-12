@@ -1,6 +1,4 @@
-library(ggplot2)
-library(data.table)
-library(tibble)
+#plots
 plot_kest = function(config, path){
   df = fread(path, data.table = FALSE)
   p = df %>%

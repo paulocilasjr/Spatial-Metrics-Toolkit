@@ -1,7 +1,4 @@
-library(spatstat.geom)
-library(spatstat.explore)
-library(data.table)
-library(dplyr)
+
 
 calculate_gest = function(yaml, path){
   #read in files

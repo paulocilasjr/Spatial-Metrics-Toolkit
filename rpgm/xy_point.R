@@ -1,7 +1,4 @@
-library(ggplot2)
-library(data.table)
-library(dplyr)
-library(tidyr)
+
 plot_xy = function(yaml, path){
   #read in files
   df = fread(path)
