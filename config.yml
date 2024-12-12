@@ -14,6 +14,9 @@ variables:
     - CD3..Opal.570..Positive
   radii_range: 0:300
   permute: FALSE
+metrics:
+  - kest
+  - gest
 workflows:
   multiplex_immunofluorescence: TRUE
   spatial_transcriptomics: FALSE #ignored
