@@ -45,6 +45,6 @@ calculate_kest = function(yaml, path){
   }) %>%
     do.call(bind_rows, .)
   fwrite(kest_res,
-         file.path(yaml$paths$output, 'metrics/kest/', basename(path)),
+         file.path(yaml$paths$output, 'metrics/kest/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
          compress = "gzip")
 }
