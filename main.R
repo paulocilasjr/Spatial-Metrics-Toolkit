@@ -56,7 +56,6 @@ source("rpgm/kest.R")
 source("rpgm/gest.R")
 source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
-source("rpgm/plot_metrics.R")
 
 #prep folder structure
 cat("Creating folder structure\n")
