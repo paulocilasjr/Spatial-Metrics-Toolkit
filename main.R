@@ -109,7 +109,7 @@ tmp = mclapply(config$metrics, function(m){
 output_dir <- file.path(opt$output, "figures")
 
 # Create a PDF file for the report
-pdf_output_path <- file.path(output_dir, "combined_report.pdf")
+pdf_output_path <- file.path(opt$output, "combined_report.pdf")
 
 # Find all directories inside the output_dir
 dirs <- list.dirs(output_dir, full.names = TRUE, recursive = FALSE)
