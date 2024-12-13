@@ -4,7 +4,8 @@ plot_kest = function(config, path){
   p = df %>%
     ggplot() +
     geom_line(aes(x = r, y = border - theo, color = Marker)) +
-    facet_grid(get(config$variables$tissue_class_label)~.)
+    facet_grid(get(config$variables$tissue_class_label)~.) +
+    theme_classic()
   
   pdf(file.path(config$paths$output, 'figures/metrics/kest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
       height = 7, width = 10)
@@ -17,7 +18,8 @@ plot_gest = function(config, path){
   p = df %>%
     ggplot() +
     geom_line(aes(x = r, y = rs - theo, color = Marker)) +
-    facet_grid(get(config$variables$tissue_class_label)~.)
+    facet_grid(get(config$variables$tissue_class_label)~.) +
+    theme_classic()
   
   pdf(file.path(config$paths$output, 'figures/metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
       height = 7, width = 10)
@@ -46,7 +48,9 @@ plot_dbscan = function(config, path){
     mutate(radius = as.numeric(radius)) %>%
     ggplot() + 
     geom_line(aes(x = radius, y = clusters, color = Marker)) +
-    facet_grid(get(config$variables$tissue_class_label)~.)
+    facet_grid(get(config$variables$tissue_class_label)~.) +
+    theme_classic()
+  
   pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
       height = 7, width = 10)
   print(p)
