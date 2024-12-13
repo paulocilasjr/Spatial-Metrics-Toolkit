@@ -1,5 +1,5 @@
 
-
+#calculate kest
 calculate_kest = function(yaml, path){
   #read in files
   df = fread(path)
@@ -44,4 +44,19 @@ calculate_kest = function(yaml, path){
   fwrite(kest_res,
          file.path(yaml$paths$output, 'metrics/kest/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
          compress = "gzip")
+}
+
+#plot it
+plot_kest = function(config, path){
+  df = fread(path, data.table = FALSE)
+  p = df %>%
+    ggplot() +
+    geom_line(aes(x = r, y = border - theo, color = Marker)) +
+    facet_grid(get(config$variables$tissue_class_label)~.) +
+    theme_classic()
+  
+  pdf(file.path(config$paths$output, 'figures/metrics/kest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+      height = 7, width = 10)
+  print(p)
+  dev.off()
 }

@@ -1,4 +1,4 @@
-
+#calculate the metric
 calculate_dbscan = function(config, path){
   #read in files
   df = fread(path, data.table = FALSE)
@@ -33,4 +33,35 @@ calculate_dbscan = function(config, path){
   })
   saveRDS(out,
           file.path(config$paths$output, 'metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".rds")))
+}
+
+#plot it
+plot_dbscan = function(config, path){
+  db_res = readRDS(path)
+  #convert results to table
+  out = lapply(names(db_res), function(t){
+    tis = db_res[[t]]
+    lapply(names(tis), function(m){
+      marker = tis[[m]]
+      lapply(marker, function(r){
+        data.table(clusters = r$num_clusters)
+      }) %>% do.call(bind_rows, .) %>% 
+        rownames_to_column("radius") %>%
+        mutate(Marker = m)
+    }) %>% do.call(bind_rows, .) %>%
+      mutate(!!config$variables$tissue_class_label := t)
+  }) %>%
+    do.call(bind_rows, .)
+  #create plot
+  p = out %>%
+    mutate(radius = as.numeric(radius)) %>%
+    ggplot() + 
+    geom_line(aes(x = radius, y = clusters, color = Marker)) +
+    facet_grid(get(config$variables$tissue_class_label)~.) +
+    theme_classic()
+  
+  pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+      height = 7, width = 10)
+  print(p)
+  dev.off()
 }

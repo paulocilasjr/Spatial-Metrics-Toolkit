@@ -1,5 +1,5 @@
 
-
+#calculate gest
 calculate_gest = function(yaml, path){
   #read in files
   df = fread(path)
@@ -44,4 +44,19 @@ calculate_gest = function(yaml, path){
   fwrite(gest_res,
          file.path(yaml$paths$output, 'metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
          compress = "gzip")
+}
+
+#plot it
+plot_gest = function(config, path){
+  df = fread(path, data.table = FALSE)
+  p = df %>%
+    ggplot() +
+    geom_line(aes(x = r, y = rs - theo, color = Marker)) +
+    facet_grid(get(config$variables$tissue_class_label)~.) +
+    theme_classic()
+  
+  pdf(file.path(config$paths$output, 'figures/metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+      height = 7, width = 10)
+  print(p)
+  dev.off()
 }
