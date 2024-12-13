@@ -11,15 +11,16 @@ if (!getOption("repos")["CRAN"] == "https://cloud.r-project.org/") {
 
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
-              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome",
+
+              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome", "ggpubr",
               "spatstat.geom", "spatstat.explore", "dbscan", "qpdf")
 
-# Install missing packages and load silently
-lapply(packages, function(pkg) {
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    cat(sprintf("Package '%s' is missing. Installing now...\n", pkg))
-    install.packages(pkg, dependencies = TRUE)
-  }
+# Install missing packages 
+missing_packages <- setdiff(packages,names(installed.packages()[,1]))
+install.packages(missing_packages, quiet = TRUE)
+
+# Suppress installation messages from printing to console
+loaded = lapply(packages, function(pkg) {
   suppressPackageStartupMessages(library(pkg, character.only = TRUE))
 })
 
@@ -94,8 +95,12 @@ spatial_summary = mclapply(sfiles, function(p){
   generate_marker_summary(config, p)
 }, mc.cores = opt$cores) %>%
   do.call(bind_rows, .)
+colnames(spatial_summary)[1] = config$variables$sample_id
 fwrite(spatial_summary,
-       config$paths$sample)
+       file.path(config$paths$output, config$paths$sample))
+
+#distribution plots
+plot_distributions(config = config)
 
 #calculate spatial metrics
 cat("Calculating Metrics\n")

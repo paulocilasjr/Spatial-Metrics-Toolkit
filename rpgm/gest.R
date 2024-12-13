@@ -4,15 +4,21 @@ calculate_gest = function(yaml, path){
   #read in files
   df = fread(path)
   #split based on the classifier label colun
-  df_list = split(df, df[[yaml$variables$tissue_class_label]])
+  if(!is.null(yaml$variables$tissue_class_label)){
+    df_list = split(df, df[[yaml$variables$tissue_class_label]])
+  } else {
+    df_list = list("Overall" = df)
+  }
   #identify windows of compartments
   windows = lapply(df_list, function(x){
-    convexhull.xy(x$x, x$y)
+    convexhull.xy(x[[yaml$variables$x_value]], 
+                  x[[yaml$variables$y_value]])
   })
   #point pattern objects
   pp_objs = lapply(seq(df_list), function(l){
     x = df_list[[l]]
-    ppp(x$x, x$y, window = windows[[l]],
+    ppp(x[[yaml$variables$x_value]], 
+        x[[yaml$variables$y_value]], window = windows[[l]],
         marks = x[,yaml$variables$markers, with = FALSE])
   })
   gest_res = lapply(seq(df_list), function(l){
@@ -21,6 +27,7 @@ calculate_gest = function(yaml, path){
       as.data.frame(check.names = FALSE)
     id = unique(x[[yaml$variables$sample_id]])
     res = lapply(yaml$variables$markers, function(marker){
+      #print(marker)
       p2 = subset(p, marks(p)[[marker]] == 1)
       if(npoints(p2) < 2){
         out = data.frame(r = eval(parse(text = yaml$variables$radii_range))) %>%
@@ -35,8 +42,14 @@ calculate_gest = function(yaml, path){
                  .before = 1)
       }
       
-      return(out %>%
-               mutate(!!yaml$variables$tissue_class_label := names(df_list)[l]))
+      if(!is.null(yaml$variables$tissue_class_label)){
+        out %>%
+          mutate(!!yaml$variables$tissue_class_label := names(df_list)[l]) %>%
+          return()
+      } else {
+        return(out)
+      }
+     
     }) %>%
       do.call(bind_rows, .)
   }) %>%
@@ -48,15 +61,27 @@ calculate_gest = function(yaml, path){
 
 #plot it
 plot_gest = function(config, path){
-  df = fread(path, data.table = FALSE)
-  p = df %>%
-    ggplot() +
-    geom_line(aes(x = r, y = rs - theo, color = Marker)) +
-    facet_grid(get(config$variables$tissue_class_label)~.) +
-    theme_classic()
-  
-  pdf(file.path(config$paths$output, 'figures/metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
-      height = 7, width = 10)
-  print(p)
-  dev.off()
+  df = fread(path, data.table = FALSE) %>%
+    mutate(r = as.numeric(r))
+  if(!is.null(config$variables$tissue_class_label)){
+    p = df %>%
+      ggplot() +
+      geom_line(aes(x = r, y = rs - theo, color = Marker)) +
+      facet_grid(get(config$variables$tissue_class_label)~.) +
+      theme_classic()
+    
+    pdf(file.path(config$paths$output, 'figures/metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+        height = 7, width = 10)
+    print(p)
+    dev.off()
+  } else {
+    p = df %>%
+      ggplot() +
+      geom_line(aes(x = r, y = rs - theo, color = Marker)) +
+      theme_classic()
+    pdf(file.path(config$paths$output, 'figures/metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+        height = 6, width = 10)
+    print(p)
+    dev.off()
+  }
 }
