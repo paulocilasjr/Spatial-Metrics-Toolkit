@@ -39,7 +39,7 @@ The input data must be a CSV file with the following required columns:
 
 Once your data is formatted correctly: 1. Place your CSV file in the `data/per-cell/` directory specified by the toolkit. 2. Run the tool using the appropriate command or script (refer to the [Usage Instructions](#usage-instructions) below). 3. Outputs will be saved in a structured folder with summary metrics and visualizations.
 
-## Usage Instructions {#usage-instructions}
+## Usage Instructions
 
 1.  **Other Parameters in YAML**
 
@@ -50,7 +50,6 @@ Once your data is formatted correctly: 1. Place your CSV file in the `data/per-c
     -   `variables`: Use this to specify variables for analyses.
         -   `markers`: columns that are used to identify the cell types
         -   `x_value`/`y_value`: column specifying the location of centroid of cells
-        -   `y_value`: column
 
 2.  **Command-line Execution**\
     Use the following command to run the toolkit:
