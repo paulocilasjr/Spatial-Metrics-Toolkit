@@ -1,7 +1,7 @@
-# run with
-# "Rscript main.R -y config.yml"
+#run with
+#"Rscript main.R -y config.yml"
 
-# global libraries
+#global libraries
 cat("Prepping environment\n")
 
 # Set a default CRAN mirror if none is already set
@@ -12,8 +12,8 @@ if (!getOption("repos")["CRAN"] == "https://cloud.r-project.org/") {
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
               "ggplot2", "tibble", "dplyr", "tidyr",
-              "spatstat.geom", "spatstat.explore", "dbscan", "htmltools", 
-              "R.utils", "gridExtra", "pdftools", "qpdf")
+              "spatstat.geom", "spatstat.explore", "dbscan", 
+              "R.utils", "pdftools", "qpdf")
 
 # Install missing packages and load silently
 lapply(packages, function(pkg) {
@@ -24,8 +24,10 @@ lapply(packages, function(pkg) {
   suppressPackageStartupMessages(library(pkg, character.only = TRUE))
 })
 
-# for testing
+#for testing
+#option_list = read_yaml("config.yml")
 cat("Making options list\n")
+#option - only taking in a yaml
 option_list = list(
   make_option(
     opt_str = c("-y", "--yaml"),
@@ -50,25 +52,25 @@ option_list = list(
   )
 )
 
-# parse the option to get the yaml location
+#parse the option to get the yaml location
 cat("Parsing Options\n")
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
-# read in the yaml
+#read in the yaml
 cat("Reading yaml\n")
 config = read_yaml(opt$yaml)
 
 # Set output folder based on user input
 output_dir <- opt$output
 
-# spatial files
+#spatial files
 cat("Identifying spatial files\n")
 sfiles = list.files(config$paths$spatial, 
                     pattern = 'csv',
                     full.names = TRUE)
 
-# source functions
+#source functions
 cat("Sourcing functions\n")
 source("rpgm/create_folders.R")
 source("rpgm/kest.R")
@@ -77,11 +79,12 @@ source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
 source("rpgm/Summarise_function.R")
 
-# prep folder structure
+#prep folder structure
 cat("Creating folder structure\n")
 createfolders(config)
 
-# plot functions for raw csv inputs
+#plot functions for raw csv inputs
+#use data.table to import gz
 cat("Plotting xy points\n")
 tmp = mclapply(sfiles, function(p){
   plot_xy(config, p)
