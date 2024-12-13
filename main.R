@@ -8,7 +8,11 @@ packages <- c("yaml", "optparse", "parallel", "data.table",
               "ggplot2", "tibble", "dplyr", "tidyr",
               "spatstat.geom", "spatstat.explore", "dbscan")
 
-# Install missing packages and load silently
+# Install missing packages 
+missing_packages <- setdiff(packages,names(installed.packages()[,1]))
+install.packages(missing_packages, quiet = TRUE)
+
+# Suppress installation messages from printing to console
 loaded = lapply(packages, function(pkg) {
   suppressPackageStartupMessages(library(pkg, character.only = TRUE))
 })
