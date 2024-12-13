@@ -11,9 +11,8 @@ if (!getOption("repos")["CRAN"] == "https://cloud.r-project.org/") {
 
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
-              "ggplot2", "tibble", "dplyr", "tidyr",
-              "spatstat.geom", "spatstat.explore", "dbscan", 
-              "gridExtra", "grid", "qpdf")
+              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome",
+              "spatstat.geom", "spatstat.explore", "dbscan", "qpdf")
 
 # Install missing packages and load silently
 lapply(packages, function(pkg) {
