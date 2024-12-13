@@ -60,15 +60,21 @@ library(dplyr)#summarise functionality
 #try a cleaner way perhaps?
 generate_marker_summary = function(config, path){
   df = fread(path, data.table = FALSE)
-  overall = summarize_markers(config, df) %>%
-    mutate(!!config$variables$tissue_class_label := "Overall")
-  df_list = split(df, df[[config$variables$tissue_class_label]])
-  df_summs = lapply(df_list, function(df1){
-    summarize_markers(config, df1)
-  }) %>%
-    do.call(bind_rows, .) %>%
-    mutate(!!config$variables$tissue_class_label := names(df_list)) %>%
-    bind_rows(overall, .)
+  #if there is a tissue classifier
+  if(!is.null(config$variables$tissue_class_label)){
+    overall = summarize_markers(config, df) %>%
+      mutate(!!config$variables$tissue_class_label := "Overall")
+    df_list = split(df, df[[config$variables$tissue_class_label]])
+    df_summs = lapply(df_list, function(df1){
+      summarize_markers(config, df1)
+    }) %>%
+      do.call(bind_rows, .) %>%
+      mutate(!!config$variables$tissue_class_label := names(df_list)) %>%
+      bind_rows(overall, .)
+  } else {
+    df_summs = summarize_markers(config, df)
+  }
+  
   return(df_summs)
 }
 

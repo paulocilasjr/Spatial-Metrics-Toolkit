@@ -75,7 +75,7 @@ spatial_summary = mclapply(sfiles, function(p){
 }, mc.cores = opt$cores) %>%
   do.call(bind_rows, .)
 fwrite(spatial_summary,
-       config$paths$sample)
+       file.path(config$paths$output, config$paths$sample))
 
 #calculate spatial metrics
 cat("Calculating Metrics\n")

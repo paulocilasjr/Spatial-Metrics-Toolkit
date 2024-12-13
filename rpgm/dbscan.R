@@ -3,7 +3,11 @@ calculate_dbscan = function(config, path){
   #read in files
   df = fread(path, data.table = FALSE)
   #split based on the classifier label colun
-  df_list = split(df, df[[config$variables$tissue_class_label]])
+  if(!is.null(config$variables$tissue_class_label)){
+    df_list = split(df, df[[config$variables$tissue_class_label]])
+  } else {
+    df_list = list("Overall" = df)
+  }
   
   #broken down by
   #tissue_class_label > marker > radius
@@ -16,7 +20,8 @@ calculate_dbscan = function(config, path){
       wkn_df = tcl %>% filter(get(marker) == 1)
       #handle 0
       if(nrow(wkn_df) < 2) return() #do something to skip/handle
-      x = as.matrix(wkn_df[,c('x', 'y')])
+      x = as.matrix(wkn_df[,c(config$variables$x_value,
+                              config$variables$y_value)])
       db_out = lapply(radii, function(r){
         set.seed(333)
         db = dbscan(x, eps = r, minPts = 5)
@@ -41,15 +46,21 @@ plot_dbscan = function(config, path){
   #convert results to table
   out = lapply(names(db_res), function(t){
     tis = db_res[[t]]
-    lapply(names(tis), function(m){
+    tmp = lapply(names(tis), function(m){
       marker = tis[[m]]
       lapply(marker, function(r){
         data.table(clusters = r$num_clusters)
       }) %>% do.call(bind_rows, .) %>% 
         rownames_to_column("radius") %>%
         mutate(Marker = m)
-    }) %>% do.call(bind_rows, .) %>%
-      mutate(!!config$variables$tissue_class_label := t)
+    }) %>% do.call(bind_rows, .)
+    if(!is.null(config$variables$tissue_class_label)){
+      tmp %>%
+        mutate(!!config$variables$tissue_class_label := t) %>%
+        return()
+    } else {
+      return(tmp)
+    }
   }) %>%
     do.call(bind_rows, .)
   #create plot
@@ -57,11 +68,20 @@ plot_dbscan = function(config, path){
     mutate(radius = as.numeric(radius)) %>%
     ggplot() + 
     geom_line(aes(x = radius, y = clusters, color = Marker)) +
-    facet_grid(get(config$variables$tissue_class_label)~.) +
     theme_classic()
   
-  pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
-      height = 7, width = 10)
-  print(p)
-  dev.off()
+  if(!is.null(config$variables$tissue_class_label)){
+    p = p +
+      facet_grid(get(config$variables$tissue_class_label)~.)
+    
+    pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+        height = 7, width = 10)
+    print(p)
+    dev.off()
+  } else {
+    pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+        height = 7, width = 10)
+    print(p)
+    dev.off()
+  }
 }
