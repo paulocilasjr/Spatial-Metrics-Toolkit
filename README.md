@@ -1,4 +1,5 @@
 
+
 # Spatial Metrics Toolkit
 
 ## Overview
@@ -47,15 +48,18 @@ Once your data is formatted correctly:
 1. **Command-line Execution**  
    Use the following command to run the toolkit:
    ```bash
-   #need to figure this part out
-   Rscript run_spatialmetrics.R --input /path/to/your/file.csv --output /path/to/output/dir
+   Rscript main.R --input config.yml
    ```
 
-   Replace `/path/to/your/file.csv` with the path to your input file and `/path/to/output/dir` with the desired output directory.
+   `config.yml`: Replace input/output paths and specify target markers/features in respective categories to analyze your spatial data. 🛠️
 
 2. **Optional Parameters**  
-   - `--method`: Specify a spatial summary method to run (e.g., `Ripley's K`, `DBSCAN`).
-   - `--compartment`: Use this flag to enable analyses stratified by tissue compartments.
+   - `--method`: Choose spatial summary statistics [Ripley's K, G-function, J-function, DBSCAN] for analyzing point pattern distributions and clustering behavior. 🔍
+	   - `--dbscan`: DBSCAN: Density-based spatial clustering algorithm that groups points with many neighbors within a radius ε while detecting noise, enabling discovery of arbitrary-shaped clusters in spatial data. 📊
+	   -  `--kest`: Estimates Ripley's K-function to analyze spatial point patterns by measuring inter-point distances and clustering intensity at multiple scales within any window shape. 📊
+	   - `--gest`: Estimates nearest neighbor distance distribution G(r) to analyze spatial point patterns by measuring point-to-point proximity relationships in any window shape. 📊
+	   - `--jest`: Estimates J-function summary statistic (comparing point-to-point and point-to-nearest-neighbor distances) to assess spatial clustering or regularity in any window shape. 📊	   
+	- `--compartment`: Use this flag to enable analyses stratified by tissue compartments.
 
 ## Output
 
