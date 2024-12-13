@@ -5,7 +5,7 @@
 cat("Prepping environment\n")
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
-              "ggplot2", "tibble", "dplyr", "tidyr",
+              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome",
               "spatstat.geom", "spatstat.explore", "dbscan")
 
 # Install missing packages and load silently
