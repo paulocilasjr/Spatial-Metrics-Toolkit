@@ -75,6 +75,7 @@ source("rpgm/kest.R")
 source("rpgm/gest.R")
 source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
+source("rpgm/Summarise_function.R")
 
 # prep folder structure
 cat("Creating folder structure\n")
@@ -86,7 +87,15 @@ tmp = mclapply(sfiles, function(p){
   plot_xy(config, p)
 }, mc.cores = opt$cores)
 
-# calculate spatial metrics
+#summarize the spatial files
+spatial_summary = mclapply(sfiles, function(p){
+  generate_marker_summary(config, p)
+}, mc.cores = opt$cores) %>%
+  do.call(bind_rows, .)
+fwrite(spatial_summary,
+       config$paths$sample)
+
+#calculate spatial metrics
 cat("Calculating Metrics\n")
 tmp = mclapply(config$metrics, function(m){
   mclapply(sfiles, function(f){

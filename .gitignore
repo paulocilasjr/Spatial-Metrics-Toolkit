@@ -57,3 +57,7 @@ renv/
 output/.DS_Store
 output/figures/.DS_Store
 output/metrics/.DS_Store
+
+# ST data example
+data/per-cell_ST/
+config_ST.yml
