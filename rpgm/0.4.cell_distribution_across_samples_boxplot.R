@@ -57,6 +57,6 @@ cell_distribution_plot <- function(yaml_config=NULL){
       axis.title.x = element_text(face='bold', size=10),
       legend.title = element_text(face='bold'),
       legend.text = element_text(face='bold'))
-  out1 <- paste0(outputFilePath, "/", "cell_distribution_acorss_sample_barplot.pdf", sep="")
+  out1 <- paste0(outputFilePath, "/", "cell_distribution_acorss_sample_boxplot.pdf", sep="")
   ggsave(out1)
 }
