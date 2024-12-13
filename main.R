@@ -13,7 +13,7 @@ if (!getOption("repos")["CRAN"] == "https://cloud.r-project.org/") {
 packages <- c("yaml", "optparse", "parallel", "data.table",
               "ggplot2", "tibble", "dplyr", "tidyr",
               "spatstat.geom", "spatstat.explore", "dbscan", 
-              "R.utils", "pdftools", "qpdf")
+              "gridExtra", "grid", "qpdf")
 
 # Install missing packages and load silently
 lapply(packages, function(pkg) {
@@ -108,25 +108,46 @@ tmp = mclapply(config$metrics, function(m){
   }, mc.allow.recursive = TRUE)
 }, mc.cores = opt$cores, mc.allow.recursive = TRUE)
 
+#plot functions for spatial metrics
+cat("Plotting results\n")
+cat("\tFinding derived results\n")
+sm_files = lapply(config$metrics, function(m){
+  list.files(file.path(config$paths$output, "metrics", m), full.names = TRUE)
+})
+names(sm_files) = config$metrics
+cat("\tCreating plots\n")
+tmp = mclapply(names(sm_files), function(m){
+  tmp = mclapply(sm_files[[m]], function(f){
+    if(m == "kest") plot_kest(config, f)
+    if(m == "gest") plot_gest(config, f)
+    if(m == "dbscan") plot_dbscan(config, f)
+  }, mc.allow.recursive = TRUE)
+}, mc.cores = opt$cores, mc.allow.recursive = TRUE)
+
 # Set output folder based on user input
 output_dir <- file.path(opt$output, "figures")
 
-# Create a PDF file for the report
+# Create a PDF file for the combined report
 pdf_output_path <- file.path(opt$output, "combined_report.pdf")
 
 # Find all directories inside the output_dir
 dirs <- list.dirs(output_dir, full.names = TRUE, recursive = FALSE)
 
-# Collect all PDF files in the directory
+# Collect all PDF files in the directory, recursively
 pdf_files <- c()
 for (dir in dirs) {
   # Find all PDF files in the current directory
-  pdf_files <- c(pdf_files, list.files(dir, pattern = "\\.pdf$", full.names = TRUE))
+  pdf_files <- c(pdf_files, list.files(dir, pattern = "\\.pdf$", full.names = TRUE, recursive = TRUE))
 }
 
-# Combine the PDFs into one report using qpdf
+# Check if there are any PDFs to combine
 if (length(pdf_files) > 0) {
+  cat("Found the following PDF files:\n")
+  print(pdf_files)
+  
+  # Combine the PDFs into one report using qpdf
   qpdf::pdf_combine(pdf_files, pdf_output_path)
+  
   cat("Saving combined PDF report to:", pdf_output_path, "\n")
 } else {
   cat("No PDF files found to combine.\n")
