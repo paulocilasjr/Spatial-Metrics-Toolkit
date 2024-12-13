@@ -5,7 +5,7 @@
 cat("Prepping environment\n")
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
-              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome",
+              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome", "ggpubr",
               "spatstat.geom", "spatstat.explore", "dbscan")
 
 # Install missing packages 
@@ -78,8 +78,12 @@ spatial_summary = mclapply(sfiles, function(p){
   generate_marker_summary(config, p)
 }, mc.cores = opt$cores) %>%
   do.call(bind_rows, .)
+colnames(spatial_summary)[1] = config$variables$sample_id
 fwrite(spatial_summary,
        file.path(config$paths$output, config$paths$sample))
+
+#distribution plots
+plot_distributions(config = config)
 
 #calculate spatial metrics
 cat("Calculating Metrics\n")
